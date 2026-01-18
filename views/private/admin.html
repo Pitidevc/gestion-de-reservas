@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Gesti&oacute;n Reservas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans">
+
+    <div class="flex h-screen">
+        <!-- Botón para abrir menú (solo visible en móviles) -->
+        <button id="openSidebar" class="md:hidden fixed top-4 left-4 z-50 bg-blue-600 text-white p-2 rounded-lg">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Overlay oscuro cuando el menú está abierto (solo en móviles) -->
+        <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/50 md:hidden z-40"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed md:static w-80 md:w-94 h-screen bg-slate-900 text-white flex flex-col p-6 shadow-2xl transition-transform duration-300 -translate-x-full md:translate-x-0 z-50">
+            <!-- Botón para cerrar menú (solo visible en móviles) -->
+            <button id="closeSidebar" class="md:hidden absolute top-4 right-4">
+                <i data-lucide="x" class="w-6 h-6 text-white"></i>
+            </button>
+
+            <h1 class="pl-4 text-2xl font-black mb-10 text-blue-400 italic">Admin PRO</h1>
+            
+            <nav class="space-y-4 flex-1">
+                <button id="btnInicio" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-blue-500 transition-all border border-transparent hover:border-slate-700">
+                    <i data-lucide="home"></i>
+                    <span>Inicio</span>
+                </button>
+                <button id="btnApartamento" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-blue-500 transition-all border border-transparent hover:border-slate-700">
+                    <i data-lucide="building-2"></i>
+                    <span>Agregar Apartamento</span>
+                </button>
+
+                <button id="btnLimpiadores" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-blue-500 transition-all border border-transparent hover:border-slate-700">
+                    <i data-lucide="users"></i>
+                    <span>Agregar Limpiadores</span>
+                </button>
+
+                <button id="btnAsignar" class="w-full flex items-center space-x-3 p-3 rounded-xl  hover:bg-blue-500 transition-all border border-transparent hover:border-slate-700">
+                    <i data-lucide="calendar-check"></i>
+                    <span>Asignar Limpieza</span>
+                </button>
+
+                <button id="btnGestionar" class="w-full flex items-center space-x-3 p-3 rounded-xl  hover:bg-blue-500 transition-all border border-transparent hover:border-slate-700">
+                    <i data-lucide="square-user-round"></i>
+                    <span>Gestionar Limpiadores</span>
+                </button>
+
+                <button id="btnConfiguracion" class="w-full flex items-center space-x-3 p-3 rounded-xl  hover:bg-blue-500 transition-all border border-transparent hover:border-slate-700">
+                    <i data-lucide="square-user-round"></i>
+                    <span>Gestionar Cuenta</span>
+                </button>
+            </nav>
+
+            <button id="btnLogout" class="mt-auto flex items-center space-x-3 p-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all">
+                <i data-lucide="log-out"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-1 overflow-y-auto p-10 pt-20 md:pt-10 w-full md:w-auto">
+            <header class="mb-10 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-800">Panel de Control</h2>
+                    <p class="text-slate-500">Bienvenido al sistema de gestión del conjunto.</p>
+                </div>
+               
+            </header>
+
+            <div id="contenedorPrincipal" class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 min-h-[400px] overflow-hidden">
+                
+            </div>
+        </main>
+    </div>
+
+    <script>lucide.createIcons();</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/private/js/adminPanel.js"></script>
+</body>
+</html>

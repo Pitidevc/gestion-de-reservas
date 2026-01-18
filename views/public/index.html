@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="antialiased text-slate-900">
+    <div class="flex flex-col md:flex-row h-screen bg-cover bg-center bg-no-repeat" 
+         style="background-image: url(/img/hotel.jpg);">
+        
+        <div class="w-full md:w-1/2 h-full flex items-center justify-center bg-black/40 backdrop-blur-[3px]">
+            <div class="text-center p-8">
+                <h1 class="text-5xl font-black text-white drop-shadow-lg">Gesti&oacute;n Reservas PRO</h1>
+                <p class="text-white/80 mt-2 text-lg">Sistema de administraci&oacute;n exclusiva</p>
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 h-full bg-white flex items-center justify-center p-12">
+            <div class="w-full max-w-md">
+                <h2 class="text-3xl font-bold text-slate-800 mb-6 italic">Iniciar Sesión</h2>
+                
+                <div class="space-y-4">
+                    <input type="text" placeholder="Usuario" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all" id="Usuario">
+                    <div class="relative group">
+                        <input type="password" placeholder="Contraseña" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all" id="Contraseña">
+                        <button type="button" id="togglePassword" 
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors focus:outline-none">
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                    
+                    <select name="rol" id="Rol" class="w-full p-4 bg-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="" disabled selected>Seleccione su rol</option>
+                        <option value="admin">Administrador</option>
+                        <option value="recepcionista">Recepcionista</option>
+                        <option value="limpiador">Limpiador</option>
+                    </select>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-xl" id="Ingresar">
+                        Ingresar al Sistema
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/js/main.js"></script>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperAdmin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="min-h-screen bg-slate-100 p-8">
+    <h1 class="text-3xl font-black text-slate-800 mb-8">Control de Licencias</h1>
+    
+    <div class="bg-white rounded-3xl p-6 shadow-xl max-w-2xl mx-auto">
+        <div class="flex items-center justify-between border-b pb-4">
+            <div>
+                <h2 class="font-bold text-lg text-slate-700">Conjunto Residencial AdminPRO</h2>
+            </div>
+            <div id="contenedorPR">
+
+            </div>
+        
+        </div>
+
+        <div class="mt-8 flex gap-4">
+            <button onclick="renovar(30)" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-emerald-200">
+                +30 Días (Pago Mes)
+            </button>
+            <button onclick="suspender()" class="bg-red-100 hover:bg-red-200 text-red-600 font-bold py-4 px-6 rounded-2xl transition-all">
+                Cortar Acceso
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let idLicencia = null; // Variable global para guardar el ID
+
+window.onload = buscar;
+
+async function buscar() {
+    try {
+        const respuesta = await fetch('/api/reserva/datos-licencia', { method: 'GET' });
+        const resultado = await respuesta.json();
+
+        if (resultado.ok) {
+            idLicencia = resultado.id; // Guardamos el ID que viene de la DB
+            const contenedor = document.getElementById('contenedorPR');
+
+            const fechaVen = resultado.vencimiento.split('T')[0];
+            const fechaRen = resultado.ultimaRenovacion.split('T')[0];
+
+            // Cambiar color si está suspendida
+            const esActiva = resultado.estado === 'activa';
+            const badgeColor = esActiva ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-600 border-red-100';
+            const dotColor = esActiva ? 'bg-emerald-500' : 'bg-red-500';
+
+            contenedor.innerHTML = `
+                <div class="flex flex-col items-end gap-1">
+                    <div class="flex items-center gap-2 px-3 py-1 rounded-full ${badgeColor} border">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full ${dotColor} opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 ${dotColor}"></span>
+                        </span>
+                        <span class="text-xs font-bold uppercase tracking-wide">Licencia ${resultado.estado}</span>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-slate-400 uppercase font-semibold tracking-tighter">Vence el ${fechaVen}</p>
+                        <p class="text-sm font-mono font-bold text-slate-700 leading-none mt-1">Última renovación: ${fechaRen}</p>
+                    </div>
+                    <span class="text-[10px] bg-slate-800 text-white px-2 py-0.5 rounded-md font-medium mt-1">
+                        ${resultado.diasRestantes} DÍAS RESTANTES
+                    </span>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error("Error al buscar datos:", error);
+    }
+}
+
+async function renovar(dias) {
+    if (!idLicencia) return Swal.fire('Error', 'No se encontró el ID de la licencia', 'error');
+
+    const confirmacion = await Swal.fire({
+        title: '¿Extender Licencia?',
+        text: `Se sumarán 30 días a partir de hoy al conjunto AdminPRO`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#10B981',
+        confirmButtonText: 'Sí, confirmar pago'
+    });
+
+    if (confirmacion.isConfirmed) {
+        try {
+            // Enviamos el ID en la URL tal como lo configuramos en el backend
+            const res = await fetch(`/api/reserva/super-admin/renovar/${idLicencia}`, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Reserva99'
+                }
+            });
+            const data = await res.json();
+
+            if (data.ok) {
+                await Swal.fire('¡Éxito!', data.mensaje, 'success');
+                buscar(); // Refrescamos la vista
+            }
+        } catch (error) {
+            Swal.fire('Error', 'No se pudo procesar la renovación', 'error');
+        }
+    }
+}
+
+async function suspender() {
+    if (!idLicencia) return;
+
+    const confirmacion = await Swal.fire({
+        title: '¿Suspender Acceso?',
+        text: "El conjunto no podrá usar el programa inmediatamente",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#EF4444',
+        confirmButtonText: 'Sí, suspender'
+    });
+
+    if (confirmacion.isConfirmed) {
+        try {
+            const res = await fetch(`/api/reserva/super-admin/suspender/${idLicencia}`, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Reserva99' // <--- Aquí va el token
+                }
+            });
+            const data = await res.json();
+
+            if (data.ok) {
+                await Swal.fire('Suspendida', 'El acceso ha sido cortado', 'success');
+                buscar();
+            }
+        } catch (error) {
+            Swal.fire('Error', 'No se pudo suspender', 'error');
+        }
+    }
+}
+</script>
+    
+</body>
+</html>

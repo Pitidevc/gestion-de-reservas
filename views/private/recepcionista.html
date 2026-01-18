@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Recepción - Gestión Reservas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/es.global.min.js"></script>
+</head>
+
+            
+<body class="bg-slate-50 text-slate-900 font-sans">
+
+    <div class="flex h-screen">
+        <!-- Botón para abrir menú (solo visible en móviles) -->
+        <button id="openSidebar" class="md:hidden fixed top-4 left-4 z-50 bg-emerald-600 text-white p-2 rounded-lg">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Overlay oscuro cuando el menú está abierto (solo en móviles) -->
+        <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black/50 md:hidden z-40"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed md:static w-94 h-screen bg-slate-900 text-white flex flex-col p-6 shadow-2xl transition-transform duration-300 -translate-x-full md:translate-x-0 z-50">
+            <!-- Botón para cerrar menú (solo visible en móviles) -->
+            <button id="closeSidebar" class="md:hidden absolute top-4 right-4">
+                <i data-lucide="x" class="w-6 h-6 text-white"></i>
+            </button>
+
+            <h1 class="pl-4 text-2xl font-black mb-10 text-emerald-400 italic">Recepcion PRO</h1>
+            <nav class="space-y-4 flex-1">
+                
+                <button id="btnNuevaReserva" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-500 transition-all border border-transparent">
+                    <i data-lucide="plus-circle"></i>
+                    <span>Nueva Reserva</span>
+                </button>
+
+                <button id="btnCalendario" class="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-500 transition-all border border-transparent">
+                    <i data-lucide="calendar-fold"></i>
+                    <span>Calendario</span>
+                </button>
+                
+                <button id="btnVerReservas" class="w-full flex items-center space-x-3 p-3 rounded-xl  hover:bg-emerald-500 transition-all border border-transparent ">
+                    <i data-lucide="list"></i>
+                    <span>Ver Reservas</span>
+                </button>
+
+                <button id="btnRecep" class="w-full flex items-center space-x-3 p-3 rounded-xl  hover:bg-emerald-500 transition-all border border-transparent ">
+                    <i data-lucide="user-cog"></i>
+                    <span>Gestionar Cuenta</span>
+                </button>
+            </nav>
+
+            <button id="btnLogout" class="mt-auto flex items-center space-x-3 p-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-all">
+                <i data-lucide="log-out"></i>
+                <span>Cerrar Sesión</span>
+            </button>
+        </aside>
+
+            <main class="flex-1 overflow-y-auto p-10 pt-20 md:pt-10 w-full md:w-auto">
+            <header class="mb-10 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-800">Módulo de Recepción</h2>
+                    <p class="text-slate-500">Registro y control de ingresos de huéspedes.</p>
+                </div>
+            </header>
+
+            <div id="contenedorPrincipal" class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+                <div class="max-w-3xl mx-auto">
+                    <div class="mb-8 text-center">
+                        <h3 class="text-xl font-bold text-slate-700">Registrar Nueva Reserva</h3>
+                        <p class="text-sm text-slate-400">Complete los detalles de la estancia</p>
+                    </div>
+
+                    <form id="formReserva" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <div class="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <div class="flex flex-col space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Fecha Ingreso</label>
+                                <input type="date" name="fechin" id="fechaIngreso" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none" required>
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Hora Ingreso</label>
+                                <input type="time" name="horin" id="horaIngreso" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none">
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Fecha Salida</label>
+                                <input type="date" name="fechsa" id="fechaSalida" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none" required>
+                            </div>
+                            <div class="flex flex-col space-y-2">
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1">Hora Salida</label>
+                                <input type="time" name="horsa" id="horaSalida" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-slate-600 ml-1">Origen de Reserva</label>
+                            <select name="origen" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none transition-all" required>
+                                <option value="" disabled selected>Seleccione origen</option>
+                                <option value="Airbnb">Airbnb</option>
+                                <option value="Booking">Booking</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Propia">Directa / Propia</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-slate-600 ml-1">Apartamento</label>
+                            <select name="apartamento" id="Apartamento" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none transition-all" required>
+                                <option value="" disabled selected>Seleccione un apartamento</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-slate-600 ml-1">Nombre del Titular</label>
+                            <input type="text" name="nombreTitular" placeholder="Nombre completo" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none" required>
+                        </div>
+
+                        <div class="flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-slate-600 ml-1">Celular contacto</label>
+                            <input type="tel" name="celular" placeholder="Número de teléfono" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none" required>
+                        </div>
+
+                        <div class="md:col-span-2 flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-slate-600 ml-1">Información de Acompañantes</label>
+                            <textarea name="acompanantes" rows="4" placeholder="Pegue aquí nombres y documentos de los acompañantes..." class="p-4 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none resize-none"></textarea>
+                            <p class="text-[10px] text-slate-400 ml-2">Puede copiar y pegar listas de texto directamente.</p>
+                        </div>
+
+                        <div class="flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-slate-600 ml-1">Valor de la Reserva ($)</label>
+                            <input type="text" name="valor" id="inputValor" placeholder="0" class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none" required>
+                        </div>
+
+                        <div class="flex flex-col space-y-2">
+                            <label class="text-sm font-semibold text-slate-600 ml-1">Observaciones</label>
+                            <input type="text" name="observaciones" placeholder="Notas adicionales..." class="p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-400 outline-none">
+                        </div>
+
+                        <div class="md:col-span-2 pt-4">
+                            <button type="submit" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold hover:bg-emerald-600 transition-all shadow-lg flex items-center justify-center space-x-2">
+                                <i data-lucide="save"></i>
+                                <span>Finalizar Registro de Reserva</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="contenedorVisualizar" class="bg-amber-50 rounded-3xl shadow-xl p-8 overflow-hidden">
+                <div class="overflow-x-auto -mx-8 -mb-8 px-8 pb-8">
+                    <table class="min-w-full border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b-2 border-slate-200">
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Apartamento</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Piso</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Fecha de ingreso</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Hora de ingreso</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Fecha de salida</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Hora de salida</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Total de dias</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Titular</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Celular</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Origen</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Acompañantes</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Observaciones</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Confirmada</th>
+                                <th class="px-3 md:px-6 py-3 text-xs md:text-sm font-medium text-slate-900 whitespace-nowrap">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaVisualizar" class="text-sm text-left text-slate-500 divide-y divide-slate-100">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="ContConfig" class="hidden">
+                <div class="mt-6 max-w-lg mx-auto bg-white/70 backdrop-blur-lg p-10 rounded-[2.5rem] shadow-[0_22px_70px_4px_rgba(0,0,0,0.05)] border border-white/50">
+                     <h2 class="text-2xl font-bold mb-4">Configuración de la Cuenta</h2>
+                    <p class="text-slate-600">Aquí puedes actualizar la información de tu cuenta.</p>
+                    <h3 class="text-xl font-black text-slate-800 mb-4">Detalles de la Cuenta</h3>
+                    <div class="space-y-4">
+                        <div class="space-y-1">
+                            <label class="text-sm font-bold text-slate-500 uppercase tracking-widest">Usuario</label>
+                            <input type="text" id="configUsername" readonly class="w-full bg-transparent border-none text-slate-800 font-bold px-2 outline-none cursor-default text-sm italic">
+                        </div>
+                        <div class="space-y-1">
+                        
+                            <button id="btnCambiarContrasena" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-black py-2 px-4 rounded-2xl shadow-md transition-all duration-300 flex items-center justify-center space-x-2">
+                                <span>Cambiar Contraseña</span>
+                                <i data-lucide="key" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div id="CalendarioCont" class="hidden p-4 bg-white rounded-xl shadow-lg">
+                <div id='calendar' class="mb-6"></div>
+
+                <div id="detalleDiaCont" class="border-t pt-4">
+                    <h3 id="fechaSeleccionadaLabel" class="font-bold text-slate-700 mb-3 text-lg underline decoration-blue-500">
+                        Selecciona un día en el calendario
+                    </h3>
+                    <div id="listaReservasDia" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+        
+
+    
+    <div id="modalEdicion" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-slate-800">Editar Reserva</h3>
+                    <button onclick="cerrarModal()" class="text-slate-400 hover:text-slate-600">&times;</button>
+                </div>
+                
+                <form id="formEditarReserva" class="p-6 space-y-4">
+                    <input type="hidden" id="editReservaId" name="id">
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Hora ingreso</label>
+                            <input type="time" id="editHoraIngreso" name="edit-HoraIngreso" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Hora salida</label>
+                            <input type="time" id="editHoraSalida" name="editHora-Salida" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div class="col-span-2"> 
+                            <label class="block text-sm font-medium text-slate-700">Acompañantes</label>
+                            <textarea id="editAcompanantes" name="edit-Acompanantes" rows="2" 
+                                    placeholder="Lista de nombres..." 
+                                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                        </div>
+
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-slate-700">Observaciones</label>
+                            <textarea id="editObservaciones" name="edit-Observaciones" rows="3" 
+                                    placeholder="Detalles adicionales de la reserva..." 
+                                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Estado de Confirmación</label>
+                        <select id="editConfirmada" name="edit-confirmada" class="w-full p-2 border rounded-lg">
+                            <option value="true">Confirmada</option>
+                            <option value="false">Pendiente</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="cerrarModal()" class="px-4 py-2 text-slate-600">Cancelar</button>
+                        <button type="submit" class="px-6 py-2 bg-emerald-500 text-white rounded-lg font-bold">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+    </div>
+    <script>lucide.createIcons();</script>
+    <script src="/private/js/recepcionPanel.js"></script>
+</body>
+</html>
